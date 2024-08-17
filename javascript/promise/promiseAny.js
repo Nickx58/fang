@@ -19,3 +19,27 @@ function promiseAny(promises) {
     });
   });
 }
+
+{
+  function myPromiseAny(promises = []) {
+    return new Promise((resolve, reject) => {
+      let pending = promises.length;
+      let errors = [];
+
+      promises.forEach((promise, index) => {
+        Promise.resolve(promise)
+          .then((value) => {
+            resolve(value);
+          })
+          .catch((err) => {
+            errors[index] = err;
+            pending--;
+
+            if (pending === 0) {
+              reject(new AggregateError(errors));
+            }
+          });
+      });
+    });
+  }
+}
